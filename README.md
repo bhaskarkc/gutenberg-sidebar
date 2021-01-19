@@ -4,9 +4,9 @@ Gutenberg sidebar plugin.
 
 ## Steps
 
-i. `yarn install` or `npm i`
-ii. `yarn build`
-iii. `./node_modules/.bin/wp-env start` (needs docker)
+- `yarn install` or `npm i`
+- `yarn build`
+- `./node_modules/.bin/wp-env start` (needs docker)
 
 ## Resources
 
