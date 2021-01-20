@@ -1,78 +1,152 @@
 /**
- * Registers a new block provided a unique name and an object defining its behavior.
- *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
+ * Internal block libraries
  */
-import { registerBlockType } from "@wordpress/blocks";
+const { __ } = wp.i18n;
 
-/**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
- */
-import { __ } from "@wordpress/i18n";
+const { PluginSidebar, PluginSidebarMoreMenuItem } = wp.editPost;
+const { Component, Fragment, useState } = wp.element;
+const { PanelBody, TextControl, CheckboxControl, RadioControl } = wp.components;
+const { withSelect } = wp.data;
+const { compose } = wp.compose;
+const { registerPlugin } = wp.plugins;
 
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * All files containing `style` keyword are bundled together. The code used
- * gets applied both to the front of your site and to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
-import "./style.scss";
+class AdvertisementSettings extends Component {
+	constructor() {
+		super(...arguments);
 
-/**
- * Internal dependencies
- */
-// import Edit from "./edit";
-// import save from "./save";
-import "./sidebar";
+		this.state = {
+			key: "_advert_settings_fields",
+			value: {
+				_advert_enabled: "",
+				_advert_type: "",
+				_advert_name: "",
+			},
+		};
 
-/**
- * Every block starts by registering a new block type definition.
- *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
- */
-registerBlockType("create-block/advert-settings", {
-	/**
-	 * @see https://make.wordpress.org/core/2020/11/18/block-api-version-2/
-	 */
-	apiVersion: 2,
+		wp.apiFetch({
+			path: `/wp/v2/posts/${this.props.postId}`,
+			method: "GET",
+		}).then(
+			(data) => {
+				console.log(data.meta);
+				// this.setState({ value: data.meta._hello_gutenberg_field });
+				return data;
+			},
+			(err) => {
+				return err;
+			}
+		);
+	}
 
-	/**
-	 * This is the display title for your block, which can be translated with `i18n` functions.
-	 * The block inserter will show this name.
-	 */
-	title: __("Advert Settings", "advert-settings"),
+	// https://reactjs.org/docs/react-component.html#the-component-lifecycle
+	static getDerivedStateFromProps(nextProps, state) {
+		if (
+			(nextProps.isPublishing || nextProps.isSaving) &&
+			!nextProps.isAutoSaving
+		) {
+			wp.apiRequest({
+				path: `/advert-settings/v1/update-meta?id=${nextProps.postId}`,
+				method: "POST",
+				data: state,
+			}).then(
+				(data) => {
+					return {
+						...this.state.value,
+						_advert_enabled: data._advert_enabled,
+						_advert_type: data._advert_type,
+						_advert_name: data._advert_name,
+					};
+				},
+				(err) => {
+					return err;
+				}
+			);
+		}
+		return null;
+	}
 
-	/**
-	 * This is a short description for your block, can be translated with `i18n` functions.
-	 * It will be shown in the Block Tab in the Settings Sidebar.
-	 */
-	description: __(
-		"Example block written with ESNext standard and JSX support – build step required.",
-		"advert-settings"
-	),
+	// https://reactgo.com/react-setstate-update-object/
+	handleAdvName(val) {
+		return this.setState({
+			value: {
+				...this.state.value,
+				_advert_name: val,
+			},
+		});
+	}
 
-	/**
-	 * Blocks are grouped into categories to help users browse and discover them.
-	 * The categories provided by core are `common`, `embed`, `formatting`, `layout` and `widgets`.
-	 */
-	category: "common",
+	handleAdvContentType(option) {
+		return this.setState({
+			value: {
+				...this.state.value,
+				_advert_type: option,
+			},
+		});
+	}
 
-	/**
-	 * An icon property should be specified to make it easier to identify a block.
-	 * These can be any of WordPress’ Dashicons, or a custom svg element.
-	 */
+	handleAdvEnable(selected) {
+		return this.setState({
+			value: {
+				...this.state.value,
+				_advert_enabled: selected,
+			},
+		});
+	}
+
+	render() {
+		return (
+			<Fragment>
+				<PluginSidebarMoreMenuItem target="advert-settings-sidebar">
+					{__("Advertisement Settings")}
+				</PluginSidebarMoreMenuItem>
+				<PluginSidebar name="advert-settings-sidebar" title={__("Settings")}>
+					<PanelBody>
+						<CheckboxControl
+							heading="Advertisement"
+							label="Advertisement Enabled?"
+							help="Is the advertisement is enabled?"
+							checked={this.state.value._advert_enabled}
+							onChange={this.handleAdvEnable}
+						/>
+						<RadioControl
+							label="Commercial content type"
+							selected={this.state.value._advert_type}
+							onchange={this.handleAdvContentType}
+							options={[
+								{ label: "None", value: "none" },
+								{ label: "Sponsored Content", value: "sponsored-content" },
+								{ label: "Partnered Content", value: "partnered-content" },
+								{ label: "Brought to you by", value: "brought-to-you-by" },
+							]}
+						/>
+						<TextControl
+							label={__("Advertisement Name")}
+							value={this.state.value._advert_name}
+							onChange={this.handleAdvName}
+						/>
+					</PanelBody>
+				</PluginSidebar>
+			</Fragment>
+		);
+	}
+}
+
+const renderer = withSelect((select, { forceIsSaving }) => {
+	const {
+		getCurrentPostId,
+		isSavingPost,
+		isPublishingPost,
+		isAutosavingPost,
+	} = select("core/editor");
+	return {
+		postId: getCurrentPostId(),
+		isSaving: forceIsSaving || isSavingPost(),
+		isAutoSaving: isAutosavingPost(),
+		isPublishing: isPublishingPost(),
+	};
+})(AdvertisementSettings);
+
+registerPlugin("advert-settings", {
 	icon: "admin-site",
-
-	/**
-	 * @see ./edit.js
-	 */
-	edit: Edit,
-
-	/**
-	 * @see ./save.js
-	 */
-	save,
+	render: renderer,
 });
