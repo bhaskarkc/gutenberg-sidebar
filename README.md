@@ -10,6 +10,7 @@ Gutenberg sidebar plugin.
 
 ## Resources
 
+- https://developer.wordpress.org/block-editor/tutorials/plugin-sidebar-0/
 - https://developer.wordpress.org/block-editor/tutorials/block-tutorial/writing-your-first-block-type/
 - https://github.com/WordPress/gutenberg-examples
 - https://developer.wordpress.org/block-editor/tutorials/javascript/js-build-setup/
