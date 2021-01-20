@@ -44,11 +44,32 @@ class AdvertisementSettings {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'gutenberg_block' ] );
+		/* add_action( 'init', [ $this, 'gutenberg_block' ] ); */
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_box' ] );
 		add_action( 'save_post', [ $this, 'save' ] );
 		add_action( 'init', [ $this, 'advert_settings_register_meta' ] );
 		add_action( 'rest_api_init', [ $this, 'register_advert_meta_route' ] );
+		add_action( 'enqueue_block_editor_assets', function() {
+			if ( get_current_screen()->post_type !== 'post' ) {
+				return;
+			}
+			wp_enqueue_scripts(
+				'advert-settings-sidebar',
+				plugin_dir_url( __FILE__ ) . '/build/index.js',
+				[
+					'wp-i18n',
+					'wp-blocks',
+					'wp-edit-post',
+					'wp-element',
+					'wp-editor',
+					'wp-components',
+					'wp-data',
+					'wp-plugins',
+					'wp-edit-post',
+				],
+				filemtime( dirname( __FILE__ ) . '/src/index.js' )
+			);
+		} );
 	}
 
 	/**
@@ -71,8 +92,8 @@ class AdvertisementSettings {
 	 */
 	public function check_ep_permission() {
 		return current_user_can( 'edit_posts' )
-		? true
-		: new WP_Error( 'rest_forbidden', 'Permission denied!' );
+			? true
+			: new WP_Error( 'rest_forbidden', 'Permission denied!' );
 	}
 
 	/**
@@ -120,8 +141,8 @@ class AdvertisementSettings {
 			'Advertisement Setttings',
 			[ $this, 'metabox_display_callback' ],
 			$post_type,
-			/* 'side', */
-			/* 'high', */
+			'side',
+			'high',
 			[ '__back_compat_meta_box' => false ],
 		);
 	}
@@ -140,35 +161,35 @@ class AdvertisementSettings {
 		ob_start();
 		wp_nonce_field( 'nonce_action_advert_meta_box', 'advert_meta_box_nonce' );
 		?>
-			<div class="advert-metabox">
-				<div id="field-1">
-				<input type="checkbox" name="<?php echo self::ATTR_ADVERT_ENABLED; ?>"
-					<?php echo checked( $advert_enabled, 'On' ); ?>>
-					<label for="enable-advert">Advertisements</label>
-				</div>
-				<div id="field-2">
-				<input type="radio" id="contentChoice1" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
-					value="none" <?php echo checked( $advert_type, 'none' ); ?>>
-					<label for="contentChoice1">None</label>
+	<div class="advert-metabox">
+	<div id="field-1">
+	<input type="checkbox" name="<?php echo self::ATTR_ADVERT_ENABLED; ?>"
+		<?php echo checked( $advert_enabled, 'On' ); ?>>
+	<label for="enable-advert">Advertisements</label>
+	</div>
+	<div id="field-2">
+	<input type="radio" id="contentChoice1" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
+	value="none" <?php echo checked( $advert_type, 'none' ); ?>>
+	<label for="contentChoice1">None</label>
 
-					<input type="radio" id="contentChoice2" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
-						value="sponsored-content" <?php echo checked( $advert_type, 'sponsored-content' ); ?>>
-					<label for="contentChoice2">Sponsored Content</label>
+	<input type="radio" id="contentChoice2" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
+	value="sponsored-content" <?php echo checked( $advert_type, 'sponsored-content' ); ?>>
+	<label for="contentChoice2">Sponsored Content</label>
 
-					<input type="radio" id="contentChoice3" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
-						name="advert-type" <?php echo checked( $advert_type, 'partnered-content' ); ?>>
-					<label for="contentChoice3">Partnered Content</label>
+	<input type="radio" id="contentChoice3" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
+	name="advert-type" <?php echo checked( $advert_type, 'partnered-content' ); ?>>
+	<label for="contentChoice3">Partnered Content</label>
 
-					<input type="radio" id="contentChoice4" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
-						value="brought-to-you-by" <?php echo checked( $advert_type, 'brought-to-you-by' ); ?>>
-					<label for="contentChoice4">Brought to you by</label>
-				</div>
-				<div id="field-3">
-					<label for="advert-name">Advertiser Name</label>
-					<input type="text" id="advert-name" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
-						value="<?php echo $advertiser_name; ?>">
-				</div>
-			</div>
+	<input type="radio" id="contentChoice4" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
+	value="brought-to-you-by" <?php echo checked( $advert_type, 'brought-to-you-by' ); ?>>
+	<label for="contentChoice4">Brought to you by</label>
+	</div>
+	<div id="field-3">
+	<label for="advert-name">Advertiser Name</label>
+	<input type="text" id="advert-name" name="<?php echo self::ATTR_ADVERT_TYPE; ?>"
+	value="<?php echo $advertiser_name; ?>">
+	</div>
+	</div>
 		<?php
 		echo ob_get_clean();
 	}
