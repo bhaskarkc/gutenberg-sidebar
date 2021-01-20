@@ -21,6 +21,12 @@ class AdvertisementSettings {
 		ATTR_ADVERT_TYPE    = 'advert-type',
 		ATTR_ADVERT_NAME    = 'advert-name';
 
+	const FIELDNAMES = [
+		'_advert_enabled' => 'boolean',
+		'_advert_name'    => 'string',
+		'_advert_type'    => 'string',
+	];
+
 	/**
 	 * Instance
 	 *
@@ -49,7 +55,8 @@ class AdvertisementSettings {
 		add_action( 'save_post', [ $this, 'save' ] );
 		add_action( 'init', [ $this, 'advert_settings_register_meta' ] );
 		add_action( 'rest_api_init', [ $this, 'register_advert_meta_route' ] );
-		add_action( 'enqueue_block_assets', function() {
+
+		add_action( 'enqueue_block_editor_assets', function() {
 			if ( get_current_screen()->post_type !== 'post' ) {
 				return;
 			}
@@ -58,16 +65,11 @@ class AdvertisementSettings {
 				'advert-settings-sidebar-js',
 				plugin_dir_url( __FILE__ ) . 'build/index.js',
 				[
-					'wp-i18n',
-					'wp-blocks',
-					'wp-edit-post',
-					'wp-element',
-					'wp-editor',
-					'wp-components',
-					'wp-data',
-					'wp-plugins',
-					'wp-edit-post',
 					'wp-api',
+					'wp-i18n',
+					'wp-components',
+					'wp-element',
+					'wp-edit-post',
 				],
 				filemtime( dirname( __FILE__ ) . '/build/index.js' )
 			);
@@ -101,6 +103,8 @@ class AdvertisementSettings {
 	 * Checks permission for "/update-meta" endpoint
 	 */
 	public function check_ep_permission() {
+		var_dump( current_user_can( 'edit_posts' ) );
+		die;
 		return current_user_can( 'edit_posts' )
 			? true
 			: new WP_Error( 'rest_forbidden', 'Permission denied!' );
@@ -120,21 +124,18 @@ class AdvertisementSettings {
 	 * Register fields to the rest API.
 	 */
 	public function advert_settings_register_meta() {
-		register_post_meta(
-			'post', '_advert_settings_fields', [
-				'single'       => true,
-				'show_in_rest' => true,
-				'type'         => 'array',
-				'show_in_rest' => [
-					'schema' => [
-						'type'  => 'array',
-						'items' => [
-							'type' => 'string',
-						],
-					],
-				],
-			]
-		);
+		foreach ( self::FIELDNAMES as $fieldname => $type ) {
+			register_meta(
+				'post',
+				$fieldname,
+				[
+					'show_in_rest'  => true,
+					'auth_callback' => null,
+					'single'        => true,
+					'type'          => $type,
+				]
+			);
+		}
 	}
 
 	/**
@@ -153,7 +154,7 @@ class AdvertisementSettings {
 			$post_type,
 			'side',
 			'high',
-			[ '__back_compat_meta_box' => false ], // https://make.wordpress.org/core/2018/11/07/meta-box-compatibility-flags/.
+			[ '__back_compat_meta_box' => true ],
 		);
 	}
 
