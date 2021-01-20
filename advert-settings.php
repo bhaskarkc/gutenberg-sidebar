@@ -49,13 +49,14 @@ class AdvertisementSettings {
 		add_action( 'save_post', [ $this, 'save' ] );
 		add_action( 'init', [ $this, 'advert_settings_register_meta' ] );
 		add_action( 'rest_api_init', [ $this, 'register_advert_meta_route' ] );
-		add_action( 'enqueue_block_editor_assets', function() {
+		add_action( 'enqueue_block_assets', function() {
 			if ( get_current_screen()->post_type !== 'post' ) {
 				return;
 			}
-			wp_enqueue_scripts(
-				'advert-settings-sidebar',
-				plugin_dir_url( __FILE__ ) . '/build/index.js',
+
+			wp_enqueue_script(
+				'advert-settings-sidebar-js',
+				plugin_dir_url( __FILE__ ) . 'build/index.js',
 				[
 					'wp-i18n',
 					'wp-blocks',
@@ -66,9 +67,18 @@ class AdvertisementSettings {
 					'wp-data',
 					'wp-plugins',
 					'wp-edit-post',
+					'wp-api',
 				],
-				filemtime( dirname( __FILE__ ) . '/src/index.js' )
+				filemtime( dirname( __FILE__ ) . '/build/index.js' )
 			);
+
+			// Enqueue frontend and editor block styles.
+			/* wp_enqueue_style( */
+			/* 	'advert-settings-sidebar-js', */
+			/* 	plugin_dir_url( __FILE__ ) . 'build/style-index.css', */
+			/* 	'', */
+			/* 	filemtime( plugin_dir_path( __FILE__ ) . '/build/style-index.css' ) */
+			/* ); */
 		} );
 	}
 
@@ -143,7 +153,7 @@ class AdvertisementSettings {
 			$post_type,
 			'side',
 			'high',
-			[ '__back_compat_meta_box' => false ],
+			[ '__back_compat_meta_box' => false ], // https://make.wordpress.org/core/2018/11/07/meta-box-compatibility-flags/.
 		);
 	}
 
@@ -201,11 +211,11 @@ class AdvertisementSettings {
 	 */
 	public function save( $post_id ) {
 		// Bail if nonce is not passed.
-		/* if ( ! isset( $_POST['advert_meta_box_nonce'] ) || */
-		/* 	! wp_verify_nonce( $_POST['advert_meta_box_nonce'], 'nonce_action_advert_meta_box' ) */
-		/* ) { */
-		/* 	return $post_id; */
-		/* } */
+		if ( ! isset( $_POST['advert_meta_box_nonce'] ) ||
+			! wp_verify_nonce( $_POST['advert_meta_box_nonce'], 'nonce_action_advert_meta_box' )
+		) {
+			return $post_id;
+		}
 
 		// Bail if doing autosave.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
