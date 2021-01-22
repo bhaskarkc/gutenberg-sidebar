@@ -42,16 +42,15 @@ export default compose([
 		return {
 			setMetaFieldValue: function (value) {
 				dispatch("core/editor").editPost({
-					meta: { metatags_description_field: value },
+					meta: { _advert_name: value },
 				});
 			},
 		};
 	}),
 	withSelect((select) => {
 		return {
-			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")[
-				"metatags_description_field"
-			],
+			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")
+				._advert_name,
 		};
 	}),
 ])(AdvertName);

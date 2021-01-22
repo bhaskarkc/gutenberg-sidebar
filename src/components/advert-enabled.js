@@ -27,6 +27,7 @@ class AdvertSettingsEnabled extends React.Component {
 					<CheckboxControl
 						className="advert-enabled"
 						label="Advertisement Enabled?"
+						checked={this.props.metaFieldValue ? "checked" : ""}
 						value={this.props.metaFieldValue || false}
 						onChange={this.props.setMetaFieldValue}
 					/>
@@ -47,7 +48,6 @@ export default compose([
 		};
 	}),
 	withSelect((select) => {
-		console.log(select("core/editor").getEditedPostAttribute("meta"));
 		return {
 			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")
 				._advert_enabled,

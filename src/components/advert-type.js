@@ -27,7 +27,7 @@ class AdvertType extends React.Component {
 				<PanelRow>
 					<RadioControl
 						className="advert-content-type"
-						label="Commercial content type"
+						label="Ad content type"
 						selected={
 							this.props.metaFieldValue ? this.props.metaFieldValue : "none"
 						}
@@ -50,16 +50,15 @@ export default compose([
 		return {
 			setMetaFieldValue: function (value) {
 				dispatch("core/editor").editPost({
-					meta: { metatags_robots_field: value },
+					meta: { _advert_type: value },
 				});
 			},
 		};
 	}),
 	withSelect((select) => {
 		return {
-			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")[
-				"metatags_robots_field"
-			],
+			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")
+				._advert_type,
 		};
 	}),
 ])(AdvertType);

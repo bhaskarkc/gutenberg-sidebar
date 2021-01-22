@@ -8,10 +8,12 @@ import Sidebar from "./components/sidebar.js";
  */
 const { registerPlugin } = wp.plugins;
 
+import "./scss/index.scss";
+
 /**
  * Register the MetaTags plugin.
  */
 registerPlugin("advert-settings", {
-	icon: "editor-customchar",
+	icon: "smiley",
 	render: Sidebar,
 });
