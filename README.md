@@ -2,6 +2,8 @@
 
 A demo WorPress Gutenberg sidebar plugin.
 
+_Solution for the WordPress Gutenberg technical assesment at [@ffxblue](https://github.com/ffxblue/interview-tests/blob/master/test/wordpress-sidebar.md)_
+
 ## Steps
 
 - `yarn install`
