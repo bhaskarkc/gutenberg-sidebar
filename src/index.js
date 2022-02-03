@@ -1,7 +1,7 @@
 /**
  * Local dependencies.
  */
-import Sidebar from "./components/sidebar.js";
+import Sidebar from './components/sidebar.js';
 
 /**
  * WordPress dependencies.
@@ -13,7 +13,7 @@ const { registerPlugin } = wp.plugins;
 /**
  * Register the MetaTags plugin.
  */
-registerPlugin("advert-settings", {
-    icon: "smiley",
-    render: Sidebar,
-});
+registerPlugin( 'advert-settings', {
+	icon: 'smiley',
+	render: Sidebar,
+} );

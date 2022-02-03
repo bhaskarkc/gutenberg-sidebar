@@ -1,12 +1,11 @@
 /**
  * External dependencies.
  */
-import React from "react";
+import React from 'react';
 
 /**
  * WordPress dependencies.
  */
-const { __ } = wp.i18n;
 const { compose } = wp.compose;
 const { withDispatch, withSelect } = wp.data;
 const { RadioControl, PanelRow } = wp.components;
@@ -17,10 +16,6 @@ const { RadioControl, PanelRow } = wp.components;
  * @since 1.0.0
  */
 class AdvertType extends React.Component {
-	constructor() {
-		super();
-	}
-
 	render() {
 		return (
 			<div className="metatags-browser-title-field">
@@ -29,15 +24,26 @@ class AdvertType extends React.Component {
 						className="advert-content-type"
 						label="Ad content type"
 						selected={
-							this.props.metaFieldValue ? this.props.metaFieldValue : "none"
+							this.props.metaFieldValue
+								? this.props.metaFieldValue
+								: 'none'
 						}
-						onChange={this.props.setMetaFieldValue}
-						options={[
-							{ label: "None", value: "none" },
-							{ label: "Sponsored Content", value: "sponsored-content" },
-							{ label: "Partnered Content", value: "partnered-content" },
-							{ label: "Brought to you by", value: "brought-to-you-by" },
-						]}
+						onChange={ this.props.setMetaFieldValue }
+						options={ [
+							{ label: 'None', value: 'none' },
+							{
+								label: 'Sponsored Content',
+								value: 'sponsored-content',
+							},
+							{
+								label: 'Partnered Content',
+								value: 'partnered-content',
+							},
+							{
+								label: 'Brought to you by',
+								value: 'brought-to-you-by',
+							},
+						] }
 					/>
 				</PanelRow>
 			</div>
@@ -45,20 +51,21 @@ class AdvertType extends React.Component {
 	}
 }
 
-export default compose([
-	withDispatch((dispatch) => {
+export default compose( [
+	withDispatch( ( dispatch ) => {
 		return {
-			setMetaFieldValue: function (value) {
-				dispatch("core/editor").editPost({
+			setMetaFieldValue: ( value ) => {
+				dispatch( 'core/editor' ).editPost( {
 					meta: { _advert_type: value },
-				});
+				} );
 			},
 		};
-	}),
-	withSelect((select) => {
+	} ),
+	withSelect( ( select ) => {
 		return {
-			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")
-				._advert_type,
+			metaFieldValue: select( 'core/editor' ).getEditedPostAttribute(
+				'meta'
+			)._advert_type,
 		};
-	}),
-])(AdvertType);
+	} ),
+] )( AdvertType );

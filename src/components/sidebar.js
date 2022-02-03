@@ -1,14 +1,14 @@
 /**
  * External dependencies.
  */
-import React from "react";
+import React from 'react';
 
 /**
  * Local dependencies.
  */
-import AdvertSettingsEnabled from "./advert-enabled.js";
-import AdvertName from "./advert-name.js";
-import AdvertType from "./advert-type.js";
+import AdvertSettingsEnabled from './advert-enabled.js';
+import AdvertName from './advert-name.js';
+import AdvertType from './advert-type.js';
 
 /**
  * WordPress dependencies.
@@ -23,10 +23,6 @@ const { PluginSidebarMoreMenuItem, PluginSidebar } = wp.editPost;
  * @since 1.0.0
  */
 class Sidebar extends React.Component {
-	constructor() {
-		super();
-	}
-
 	render() {
 		return (
 			<Fragment>
@@ -34,12 +30,12 @@ class Sidebar extends React.Component {
 					target="metatags-sidebar"
 					icon="editor-customchar"
 				>
-					{__("MetaTags", "metatags")}
+					{ __( 'MetaTags', 'metatags' ) }
 				</PluginSidebarMoreMenuItem>
 
 				<PluginSidebar
 					name="metatags-sidebar"
-					title={__("MetaTags", "metatags")}
+					title={ __( 'MetaTags', 'metatags' ) }
 				>
 					<div className="metabox-sidebar-content">
 						<AdvertSettingsEnabled />

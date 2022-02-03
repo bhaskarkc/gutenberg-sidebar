@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-import React from "react";
+import React from 'react';
 
 /**
  * WordPress dependencies.
@@ -17,19 +17,15 @@ const { TextControl, PanelRow } = wp.components;
  * @since 1.0.0
  */
 class AdvertName extends React.Component {
-	constructor() {
-		super();
-	}
-
 	render() {
 		return (
 			<div className="metatags-browser-title-field">
 				<PanelRow>
 					<TextControl
 						className="advert-name"
-						label={__("Advertisement Name")}
-						value={this.props.metaFieldValue || ""}
-						onChange={this.props.setMetaFieldValue}
+						label={ __( 'Advertisement Name' ) }
+						value={ this.props.metaFieldValue || '' }
+						onChange={ this.props.setMetaFieldValue }
 					/>
 				</PanelRow>
 			</div>
@@ -37,20 +33,21 @@ class AdvertName extends React.Component {
 	}
 }
 
-export default compose([
-	withDispatch((dispatch) => {
+export default compose( [
+	withDispatch( ( dispatch ) => {
 		return {
-			setMetaFieldValue: function (value) {
-				dispatch("core/editor").editPost({
+			setMetaFieldValue: ( value ) => {
+				dispatch( 'core/editor' ).editPost( {
 					meta: { _advert_name: value },
-				});
+				} );
 			},
 		};
-	}),
-	withSelect((select) => {
+	} ),
+	withSelect( ( select ) => {
 		return {
-			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")
-				._advert_name,
+			metaFieldValue: select( 'core/editor' ).getEditedPostAttribute(
+				'meta'
+			)._advert_name,
 		};
-	}),
-])(AdvertName);
+	} ),
+] )( AdvertName );

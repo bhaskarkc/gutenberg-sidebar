@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-import React from "react";
+import React from 'react';
 
 /**
  * WordPress dependencies.
@@ -16,10 +16,6 @@ const { CheckboxControl, PanelRow } = wp.components;
  * @since 1.0.0
  */
 class AdvertSettingsEnabled extends React.Component {
-	constructor() {
-		super();
-	}
-
 	render() {
 		return (
 			<div className="metatags-browser-title-field">
@@ -27,9 +23,9 @@ class AdvertSettingsEnabled extends React.Component {
 					<CheckboxControl
 						className="advert-enabled"
 						label="Advertisement Enabled?"
-						checked={this.props.metaFieldValue ? "checked" : ""}
-						value={this.props.metaFieldValue || false}
-						onChange={this.props.setMetaFieldValue}
+						checked={ this.props.metaFieldValue ? 'checked' : '' }
+						value={ this.props.metaFieldValue || false }
+						onChange={ this.props.setMetaFieldValue }
 					/>
 				</PanelRow>
 			</div>
@@ -37,20 +33,21 @@ class AdvertSettingsEnabled extends React.Component {
 	}
 }
 
-export default compose([
-	withDispatch((dispatch) => {
+export default compose( [
+	withDispatch( ( dispatch ) => {
 		return {
-			setMetaFieldValue: function (value) {
-				dispatch("core/editor").editPost({
+			setMetaFieldValue: ( value ) => {
+				dispatch( 'core/editor' ).editPost( {
 					meta: { _advert_enabled: value },
-				});
+				} );
 			},
 		};
-	}),
-	withSelect((select) => {
+	} ),
+	withSelect( ( select ) => {
 		return {
-			metaFieldValue: select("core/editor").getEditedPostAttribute("meta")
-				._advert_enabled,
+			metaFieldValue: select( 'core/editor' ).getEditedPostAttribute(
+				'meta'
+			)._advert_enabled,
 		};
-	}),
-])(AdvertSettingsEnabled);
+	} ),
+] )( AdvertSettingsEnabled );
