@@ -8,10 +8,14 @@ _Solution for the WordPress Gutenberg technical assesment at [@ffxblue](https://
 
 - `yarn install`
 - `yarn build`
-- `yarn run wp-env start` (needs docker)
+- `yarn start` (start wordpress container)
+- `yarn stop` (stops running wordpress docker container)
+
+_Once `yarn start` wordpress instance would be running on port `8881` (check `.wp-env.json`)_
 
 ## Resources
 
-- https://developer.wordpress.org/block-editor/tutorials/devenv/
-- https://developer.wordpress.org/block-editor/tutorials/plugin-sidebar-0/
-- https://developer.wordpress.org/block-editor/tutorials/javascript/js-build-setup/
+- https://developer.wordpress.org/block-editor/getting-started/devenv/ 
+- https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/
+- https://developer.wordpress.org/block-editor/how-to-guides/plugin-sidebar-0/ 
+- https://developer.wordpress.org/block-editor/how-to-guides/javascript/js-build-setup/ 
